@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 final class SpaceXRocketsRepositoryTest {
 
-    private SpaceXRocketsRepository createRepository(){
+    private SpaceXRocketsRepository createRepository() {
         return new InMemorySpaceXRocketsRepository();
     }
 
@@ -108,4 +108,85 @@ final class SpaceXRocketsRepositoryTest {
         assertTrue(marsMission.rockets().isEmpty());
     }
 
+    @Test
+    void addMission_nullName_throwsNullPointerException() {
+        var repository = createRepository();
+        assertThrows(NullPointerException.class, () -> repository.addMission(null));
+    }
+
+    @Test
+    void addMission_blankName_throwsIllegalArgumentException() {
+        var repository = createRepository();
+        assertThrows(IllegalArgumentException.class, () -> repository.addMission(""));
+        assertThrows(IllegalArgumentException.class, () -> repository.addMission("  "));
+    }
+
+    @Test
+    void getMissionSummaries_whenAllCountsEqual_ordersByNameDesc() {
+        var repository = createRepository();
+
+        repository.addMission("Alpha");
+        repository.addMission("Zeta");
+        repository.addMission("Mars");
+
+        repository.addRocket("Dragon 1");
+        repository.addRocket("Dragon 2");
+        repository.addRocket("Dragon 3");
+
+
+        repository.assignRocketToMission("Dragon 1", "Mars");
+        repository.assignRocketToMission("Dragon 2", "Zeta");
+        repository.assignRocketToMission("Dragon 3", "Alpha");
+
+        var names = repository.getMissionSummaries().stream()
+                .map(MissionSummary::name)
+                .toList();
+
+        assertEquals(List.of("Zeta", "Mars", "Alpha"), names);
+    }
+
+    @Test
+    void getMissionSummaries_ordersByCountDesc_thenNameDescOnTie() {
+        var repository = createRepository();
+
+        repository.addMission("Alpha");
+        repository.addMission("Zeta");
+        repository.addMission("Mars");
+
+        repository.addRocket("Dragon 1");
+        repository.addRocket("Dragon 2");
+        repository.addRocket("Dragon 3");
+        repository.addRocket("Dragon 4");
+
+        repository.assignRocketToMission("Dragon 1", "Zeta");
+        repository.assignRocketToMission("Dragon 2", "Zeta");
+        repository.assignRocketToMission("Dragon 3", "Alpha");
+        repository.assignRocketToMission("Dragon 4", "Mars");
+
+        List<MissionSummary> summaries = repository.getMissionSummaries();
+
+        assertEquals(List.of("Zeta", "Mars", "Alpha"),
+                summaries.stream().map(MissionSummary::name).toList());
+
+        assertEquals(List.of(2, 1, 1),
+                summaries.stream().map(MissionSummary::rocketsCount).toList());
+    }
+
+    @Test
+    void addRocket_nameAlreadyUsed_throwsIllegalArgumentException() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> repository.addRocket("Dragon 1"));
+    }
+
+    @Test
+    void addMission_nameAlreadyUsed_throwsIllegalArgumentException() {
+        var repository = createRepository();
+        repository.addMission("Mars");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> repository.addMission("Mars"));
+    }
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 public record MissionSummary(
         String name,
-        RocketStatus status,
+        MissionStatus status,
         int rocketsCount,
         List<RocketSummary> rockets
 ) {

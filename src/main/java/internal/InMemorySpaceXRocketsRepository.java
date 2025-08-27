@@ -19,18 +19,20 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
         rockets.add(newRocket);
     }
 
-    private void validateNameString(String rocketName) {
-        if (rocketName == null) {
-            throw new NullPointerException("Rocket name cannot be null");
+    private void validateNameString(String name) {
+        if (name == null) {
+            throw new NullPointerException("Name cannot be null");
         }
-        if (rocketName.isBlank()) {
-            throw new IllegalArgumentException("Rocket name cannot be empty or blank");
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be empty or blank");
         }
     }
 
     @Override
     public void addMission(String missionName) {
-
+        validateNameString(missionName);
+        Mission mission = new Mission(missionName);
+        missions.add(mission);
     }
 
     @Override
@@ -50,15 +52,37 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
 
     @Override
     public List<MissionSummary> getMissionSummaries() {
-        return List.of();
+        return missions.stream()
+                .sorted(
+                        Comparator.comparingInt((Mission mission) -> mission.getRockets().size()).reversed()
+                                .thenComparing(Mission::getName).reversed())
+                .map((Mission mission) -> toMissionSummary(mission))
+                .toList();
+    }
+
+    private MissionSummary toMissionSummary(Mission mission) {
+        List<RocketSummary> missionRockets = mission.getRockets().stream()
+                .sorted(Comparator.comparing(Rocket::getName))
+                .map(this::toRocketSummary)
+                .toList();
+        return new MissionSummary(
+                mission.getName(),
+                mission.getStatus(),
+                mission.getRockets().size(),
+                missionRockets
+        );
     }
 
     @Override
     public List<RocketSummary> getRocketSummaries() {
         return rockets.stream()
                 .sorted(Comparator.comparing(Rocket::getName))
-                .map(rocket -> new RocketSummary(rocket.getName(), rocket.getStatus()))
+                .map(this::toRocketSummary)
                 .toList();
+    }
+
+    private RocketSummary toRocketSummary(Rocket rocket) {
+        return new RocketSummary(rocket.getName(), rocket.getStatus());
     }
 
     // Constructors

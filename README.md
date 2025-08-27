@@ -17,3 +17,8 @@ Notes:
    
 4. How to store data? Simple collection or Map? 
    Let's keep performance out of the scope for now, go with simplicity. Collection will be enough.
+
+5. What should happen when user is trying to create duplicate?
+   Throw exception? Silently ignore? 
+   Idempotent adds would be nice and clean, but it would hide bugs. 
+   Lets go with clear feedback and throw exceptions. Adds little complexity but cases are clearly separated and user knows what's going on.
