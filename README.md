@@ -15,3 +15,5 @@ Notes:
    List rockets, being able see all the names, and its statuses. It sounds like a an extra method we should add to the library logic.
 3. Return type from contract? DTO should be a necessity, lets create Summaries (records).
    
+4. How to store data? Simple collection or Map? 
+   Let's keep performance out of the scope for now, go with simplicity. Collection will be enough.
