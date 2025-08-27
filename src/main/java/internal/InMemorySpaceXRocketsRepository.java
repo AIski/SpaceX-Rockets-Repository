@@ -14,8 +14,18 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
 
     @Override
     public void addRocket(String rocketName) {
+        validateNameString(rocketName);
         Rocket newRocket = new Rocket(rocketName);
         rockets.add(newRocket);
+    }
+
+    private void validateNameString(String rocketName) {
+        if (rocketName == null) {
+            throw new NullPointerException("Rocket name cannot be null");
+        }
+        if (rocketName.isBlank()) {
+            throw new IllegalArgumentException("Rocket name cannot be empty or blank");
+        }
     }
 
     @Override
