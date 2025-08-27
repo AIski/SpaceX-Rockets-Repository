@@ -54,5 +54,58 @@ final class SpaceXRocketsRepositoryTest {
         assertEquals(RocketStatus.ON_GROUND, s.get(0).status());
     }
 
+    @Test
+    void getRocketSummaries_isSortedByNameAscending() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 3");
+        repository.addRocket("Dragon 2");
+        repository.addRocket("Dragon 1");
+
+        var names = repository.getRocketSummaries().stream()
+                .map(RocketSummary::name)
+                .toList();
+
+        assertEquals(List.of("Dragon 1", "Dragon 2", "Dragon 3"), names);
+    }
+
+    @Test
+    void getMissionSummaries_whenNoMissions_returnsEmptyList() {
+        var repository = createRepository();
+        var summaries = repository.getMissionSummaries();
+        assertNotNull(summaries);
+        assertTrue(summaries.isEmpty());
+    }
+
+
+    @Test
+    void addMission_addsMissionSuccessfully() {
+        var repository = createRepository();
+        repository.addMission("Mars");
+
+        var summaries = repository.getMissionSummaries();
+        assertEquals(1, summaries.size());
+        assertEquals("Mars", summaries.get(0).name());
+    }
+
+    @Test
+    void addMission_missionRocketsNotNull() {
+        var repository = createRepository();
+        repository.addMission("Mars");
+
+        var summaries = repository.getMissionSummaries();
+        assertNotNull(summaries.get(0).rockets());
+    }
+
+    @Test
+    void getMissionSummaries_mapsNameAndStatusCorrectly() {
+        var repository = createRepository();
+        repository.addMission("Mars");
+
+        var marsMission = repository.getMissionSummaries().get(0);
+        assertEquals(MissionStatus.SCHEDULED, marsMission.status());
+        assertEquals(0, marsMission.rocketsCount());
+        assertEquals("Mars", marsMission.name());
+        assertTrue(marsMission.rockets().isEmpty());
+    }
 
 }
