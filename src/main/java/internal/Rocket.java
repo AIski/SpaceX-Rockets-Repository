@@ -2,6 +2,8 @@ package internal;
 
 import api.RocketStatus;
 
+import java.util.Objects;
+
 
 class Rocket {
     private String name;
@@ -26,6 +28,7 @@ class Rocket {
         return mission;
     }
 
+    // Methods
     protected void repair() {
         if (this.getStatus() != RocketStatus.IN_REPAIR) {
             throw new IllegalStateException(
@@ -33,5 +36,31 @@ class Rocket {
             );
         }
         this.status = RocketStatus.ON_GROUND;
+    }
+
+    protected void launch() {
+        if (this.getStatus() != RocketStatus.ON_GROUND) {
+            throw new IllegalStateException(
+                    "Rocket to be launched must be of status IN_SPACE. Current status: " + this.getStatus()
+            );
+        }
+        this.status = RocketStatus.IN_SPACE;
+    }
+
+    protected void endMission() {
+        if (this.getStatus() != RocketStatus.IN_SPACE) {
+            throw new IllegalStateException(
+                    "Rocket to end mission must be of status IN_SPACE. Current status: " + this.getStatus()
+            );
+        }
+        this.mission = null;
+        this.status = RocketStatus.IN_REPAIR;
+    }
+
+    protected void assignMission(Mission mission) {
+        if (Objects.nonNull(this.mission)) {
+            throw new IllegalStateException("Mission cannot be assigned to a rocket if it is already assigned to another mission");
+        }
+        this.mission = mission;
     }
 }

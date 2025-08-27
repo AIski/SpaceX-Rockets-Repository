@@ -26,7 +26,9 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
 
     @Override
     public void assignRocketToMission(String rocketName, String missionName) {
-
+        Rocket rocket = getRocketByName(rocketName);
+        Mission mission = getMissionByName(missionName);
+        mission.assign(rocket);
     }
 
     @Override
