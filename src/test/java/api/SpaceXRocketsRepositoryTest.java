@@ -207,4 +207,29 @@ final class SpaceXRocketsRepositoryTest {
         assertThrows(IllegalArgumentException.class,
                 () -> repository.addMission("MARS   "));
     }
+
+    @Test
+    void assignRocketToMission_rocketNotFound_throwsNoSuchElementException() {
+
+    }
+
+    @Test
+    void assignRocketToMission_missionNotFound_throwsNoSuchElementException() {
+
+    }
+
+    @Test
+    void assignRocketToMission_rocketAlreadyAssignedToMission_throwsIllegalStateException() {
+
+    }
+
+    @Test
+    void assignRocketToMission_invalidRocketStatus_throwsIllegalStateException() {
+
+    }
+
+    @Test
+    void assignRocketToMission_invalidMissionStatus_throwsIllegalStateException() {
+
+    }
 }

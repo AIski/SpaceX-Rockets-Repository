@@ -9,9 +9,11 @@ public interface SpaceXRocketsRepository {
 
     void assignRocketToMission(String rocketName, String missionName);
 
-    void changeRocketStatus(String rocketName, RocketStatus newStatus);
+    void repairRocket(String rocketName);
 
-    void changeMissionStatus(String rocketName, MissionStatus newStatus);
+    void launchMission(String missionName);
+
+    void endMission(String missionName);
 
     List<MissionSummary> getMissionSummaries();
 
