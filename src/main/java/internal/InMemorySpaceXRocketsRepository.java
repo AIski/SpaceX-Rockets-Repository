@@ -8,18 +8,23 @@ import java.util.List;
 import java.util.Set;
 
 public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepository {
-
     private final Set<Mission> missions = new HashSet<>();
     private final Set<Rocket> rockets = new HashSet<>();
 
+
     @Override
     public void addRocket(String rocketName) {
-        validateNameString(rocketName);
-        Rocket newRocket = new Rocket(rocketName);
-        rockets.add(newRocket);
+        validateRocketName(rocketName);
+        Rocket rocket = new Rocket(rocketName.trim());
+        rockets.add(rocket);
     }
 
-    private void validateNameString(String name) {
+    private void validateRocketName(String name) {
+        validateNameStringNotNullOrBlank(name);
+        validateUniqueRocketName(name);
+    }
+
+    private void validateNameStringNotNullOrBlank(String name) {
         if (name == null) {
             throw new NullPointerException("Name cannot be null");
         }
@@ -28,11 +33,42 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
         }
     }
 
+    private void validateUniqueRocketName(String name) {
+        String normalizedName = name.trim().toLowerCase();
+
+        boolean duplicateRocketFound = rockets.stream()
+                .anyMatch(
+                        rocket -> rocket.getName().toLowerCase().equals(normalizedName)
+                );
+
+        if (duplicateRocketFound) {
+            throw new IllegalArgumentException("Rocket name already used: " + normalizedName);
+        }
+    }
+
     @Override
     public void addMission(String missionName) {
-        validateNameString(missionName);
-        Mission mission = new Mission(missionName);
+        validateMissionName(missionName);
+        Mission mission = new Mission(missionName.trim());
         missions.add(mission);
+    }
+
+    private void validateMissionName(String name) {
+        validateNameStringNotNullOrBlank(name);
+        validateUniqueMissionName(name);
+    }
+
+    private void validateUniqueMissionName(String name) {
+        String normalizedName = name.trim().toLowerCase();
+
+        boolean duplicateMissionFound = missions.stream()
+                .anyMatch(
+                        mission -> mission.getName().toLowerCase().equals(normalizedName)
+                );
+
+        if (duplicateMissionFound) {
+            throw new IllegalArgumentException("Mission name already used: " + normalizedName);
+        }
     }
 
     @Override

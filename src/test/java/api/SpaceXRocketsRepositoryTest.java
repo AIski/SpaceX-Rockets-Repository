@@ -182,11 +182,29 @@ final class SpaceXRocketsRepositoryTest {
     }
 
     @Test
+    void addRocket_similarNameAlreadyUsed_throwsIllegalArgumentException() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> repository.addRocket("DRAGON 1   "));
+    }
+
+    @Test
     void addMission_nameAlreadyUsed_throwsIllegalArgumentException() {
         var repository = createRepository();
         repository.addMission("Mars");
 
         assertThrows(IllegalArgumentException.class,
                 () -> repository.addMission("Mars"));
+    }
+
+    @Test
+    void addMission_similarNameAlreadyUsed_throwsIllegalArgumentException() {
+        var repository = createRepository();
+        repository.addMission("Mars");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> repository.addMission("MARS   "));
     }
 }
