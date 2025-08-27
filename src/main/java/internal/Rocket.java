@@ -2,6 +2,7 @@ package internal;
 
 import api.RocketStatus;
 
+
 class Rocket {
     private String name;
     private RocketStatus status = RocketStatus.ON_GROUND;
@@ -23,5 +24,14 @@ class Rocket {
 
     public Mission getMission() {
         return mission;
+    }
+
+    protected void repair() {
+        if (this.getStatus() != RocketStatus.IN_REPAIR) {
+            throw new IllegalStateException(
+                    "Rocket to be repaired must be of status IN_REPAIR. Current status: " + this.getStatus()
+            );
+        }
+        this.status = RocketStatus.ON_GROUND;
     }
 }

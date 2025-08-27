@@ -5,18 +5,10 @@ import java.util.Collection;
 final class EntityNameValidator {
 
     static void validateRocketName(String name, Collection<Rocket> rockets) {
-        validateNameStringNotNullOrBlank(name);
+        validateNameNotNullOrBlank(name);
         validateUniqueRocketName(name, rockets);
     }
 
-    private static void validateNameStringNotNullOrBlank(String name) {
-        if (name == null) {
-            throw new NullPointerException("Name cannot be null");
-        }
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("Name cannot be empty or blank");
-        }
-    }
     private static void validateUniqueRocketName(String name, Collection<Rocket> rockets) {
         String normalizedName = name.trim().toLowerCase();
 
@@ -31,7 +23,7 @@ final class EntityNameValidator {
     }
 
     static void validateMissionName(String name, Collection<Mission> missions) {
-        validateNameStringNotNullOrBlank(name);
+        validateNameNotNullOrBlank(name);
         validateUniqueMissionName(name, missions);
     }
 
@@ -45,6 +37,15 @@ final class EntityNameValidator {
 
         if (duplicateMissionFound) {
             throw new IllegalArgumentException("Mission name already used: " + normalizedName);
+        }
+    }
+
+    static void validateNameNotNullOrBlank(String name) {
+        if (name == null) {
+            throw new NullPointerException("Name cannot be null");
+        }
+        if (name.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be empty or blank");
         }
     }
 

@@ -13,6 +13,8 @@ public interface SpaceXRocketsRepository {
 
     void launchMission(String missionName);
 
+    void resumeMission(String missionName);
+
     void endMission(String missionName);
 
     List<MissionSummary> getMissionSummaries();

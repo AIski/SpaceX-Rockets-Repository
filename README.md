@@ -16,16 +16,19 @@ Statuses logic is not crystal-clear, these are assumptions we are going to stick
 
 - Mission status change I. From SCHEDULED to PENDING- given at least one rocket is assigned to it and at least one is in repair.
   If it's more than one rocket, and none of them are in repair, we move straight to IN_PROGRESS.
-  - Mission status change II. From IN_PROGRESS to COMPLETED- all rockets are returned Their statuses are set to IN_REPAIR- 
+
+
+- Mission status change II. From IN_PROGRESS to COMPLETED- all rockets are returned Their statuses are set to IN_REPAIR- 
  The <"IN_REPAIR" after mission end> part was not mentioned in requirements, but it makes sense, maintenance has to be done to any ship before re-launch.
-- Sounds like we could simplify the process of launching, and expose simple launchMission() method. 
-  This way we simplify the logic, reduce the complexity of all weird statuses, make it easier for user to operate the library.
+ Sounds like we could simplify the process of launching, and expose simple launchMission() method. 
+ This way we simplify the logic, reduce the complexity of all weird statuses, make it easier for user to operate the library.
 
  Same store with exposing finishMission() method, we would hide all the statuses complexity, weird validations, checks, make things as simple possible.
 Manual changing of mission statuses backwards, from ENDED to SCHEDULED, or stuff like this sound like a joke, we are not going to expose such a broad methods.
 
 - No re-assigning rockets to missions. 
   Once mission is assigned to rocket, it can't be re-assigned. Only once the mission is ended, and rocket is back from IN_REPAIR.
+
 
 **Notes:**
 1. Should I implement IDs?
@@ -60,3 +63,13 @@ Manual changing of mission statuses backwards, from ENDED to SCHEDULED, or stuff
    Should we expose method to setStatus just for testing? Test class is in different package, we would have to move it to same package.
    Mock it in our own library? Not sure if it's a good idea, we would also need custom protected constructor just for mocking.
    Lets keep it simple, test logic achievable by api methods.
+
+9. How to handle status changes? Domain class state change method? Alternative is protected setter, does not sound good.
+   Let's encapsulate the logic, move it to domain.
+
+10. What if rocket was on repair, mission was launched -> moved to PENDING. Upon repair, should it be automaticaly moved to IN_PROGRESS, 
+    or should the mission status upgrade be manual?
+    Lets go with manual, so the user gets to decide.
+    Meaning we implement resumeMission() method, that will move PENDING Mission to IN_PROGRESS, if all rockets are ON_GROUND.
+
+Todo: normalize equals, preferably no =='s. Normalize error messages.

@@ -4,10 +4,7 @@ import api.MissionSummary;
 import api.RocketSummary;
 import api.SpaceXRocketsRepository;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepository {
     private final Set<Mission> missions = new HashSet<>();
@@ -34,17 +31,42 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
 
     @Override
     public void repairRocket(String rocketName) {
+        Rocket rocket = getRocketByName(rocketName);
+        rocket.repair();
+    }
 
+    private Rocket getRocketByName(String rocketName) {
+        EntityNameValidator.validateNameNotNullOrBlank(rocketName);
+        return rockets.stream()
+                .filter(rocket -> rocket.getName().equalsIgnoreCase( rocketName))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Rocket not found: " + rocketName));
     }
 
     @Override
     public void launchMission(String missionName) {
+        Mission mission = getMissionByName(missionName);
+        mission.launch();
+    }
 
+    @Override
+    public void resumeMission(String missionName) {
+        Mission mission = getMissionByName(missionName);
+        mission.resume();
     }
 
     @Override
     public void endMission(String missionName) {
+        Mission mission = getMissionByName(missionName);
+        mission.end();
+    }
 
+    private Mission getMissionByName(String missionName) {
+        EntityNameValidator.validateNameNotNullOrBlank(missionName);
+        return missions.stream()
+                .filter(mission -> mission.getName().equalsIgnoreCase(missionName))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Mission not found: " + missionName));
     }
 
     @Override

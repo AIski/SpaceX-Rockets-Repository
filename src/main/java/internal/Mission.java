@@ -27,4 +27,14 @@ class Mission {
     public List<Rocket> getRockets() {
         return rockets;
     }
+
+    protected void launch() {
+    }
+
+    protected void end() {
+    }
+
+    protected void resume() {
+
+    }
 }

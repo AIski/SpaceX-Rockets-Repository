@@ -4,6 +4,7 @@ import internal.InMemorySpaceXRocketsRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -209,27 +210,101 @@ final class SpaceXRocketsRepositoryTest {
     }
 
     @Test
-    void assignRocketToMission_rocketNotFound_throwsNoSuchElementException() {
+    void assignRocketToMission_validInput_assignsSuccessfully() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+        repository.addMission("Mars");
 
+        repository.assignRocketToMission("Dragon 1", "Mars");
+
+        assertEquals(1, repository.getMissionSummaries().get(0).rocketsCount());
+        assertEquals("Dragon 1", repository.getMissionSummaries().get(0).rockets().get(0));
+    }
+
+    @Test
+    void assignRocketToMission_rocketNotFound_throwsNoSuchElementException() {
+        var repository = createRepository();
+        repository.addMission("Mars");
+        assertThrows(
+                NoSuchElementException.class,
+                () -> repository.assignRocketToMission("Dragon 1", "Mars")
+        );
     }
 
     @Test
     void assignRocketToMission_missionNotFound_throwsNoSuchElementException() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
 
+        assertThrows(
+                NoSuchElementException.class,
+                () -> repository.assignRocketToMission("Dragon 1", "Mars")
+        );
     }
 
     @Test
     void assignRocketToMission_rocketAlreadyAssignedToMission_throwsIllegalStateException() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+        repository.addMission("Mars");
+        repository.assignRocketToMission("Dragon 1", "Mars");
+        repository.addMission("Venus");
 
-    }
-
-    @Test
-    void assignRocketToMission_invalidRocketStatus_throwsIllegalStateException() {
-
+        assertThrows(
+                IllegalStateException.class,
+                () -> repository.assignRocketToMission("Dragon 1", "Venus")
+        );
     }
 
     @Test
     void assignRocketToMission_invalidMissionStatus_throwsIllegalStateException() {
-
+        // mission launched with all repaired rockets, then ended
+        // then we try to assign rocket to mission.
     }
+
+    // case after mission 1 is finished, rockets are repaired and reused to 2nd mission.
+
+
+    @Test
+    void repairRocket_validInput_backFromPreviousMission_repairsRocketSuccessfully() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+        repository.addMission("Mars");
+        repository.assignRocketToMission("Dragon 1", "Mars");
+        repository.launchMission("Mars");
+        repository.endMission("Mars");
+
+        repository.repairRocket("Dragon 1");
+        assertEquals(
+                RocketStatus.ON_GROUND,
+                repository.getRocketSummaries().get(0).status()
+        );
+    }
+
+    @Test
+    void repairRocket_invalidRocketStatusOnGround_throwsIllegalStateException() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> repository.repairRocket("Dragon 1")
+        );
+    }
+
+    @Test
+    void repairRocket_invalidRocketStatusInSpace_throwsIllegalStateException() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+        repository.addMission("Mars");
+        repository.assignRocketToMission("Dragon 1", "Mars");
+        repository.launchMission("Mars");
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> repository.repairRocket("Dragon 1")
+        );
+    }
+
+
 }
