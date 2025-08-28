@@ -1,84 +1,295 @@
+# SpaceX Rockets Management Library
+A Java library for managing SpaceX rockets and missions with a clean, intuitive API.
+## Overview
+This library provides a streamlined way to manage rockets and missions for space operations. 
+It handles the complete lifecycle of rockets and missions, from creation to completion, with proper status tracking and validation.
+## Features
+- **Rocket Management**:
+    - Create and track rockets
+    - Monitor rocket status (ON_GROUND, IN_REPAIR, IN_MISSION)
+    - Repair rockets after missions
+
+- **Mission Management**:
+    - Create missions
+    - Assign rockets to missions
+    - Launch, resume, and complete missions
+    - Automatic status tracking (SCHEDULED, PENDING, IN_PROGRESS, COMPLETED)
+
+- **Status Transitions**:
+    - Automatic status management based on api operations
+    - Proper validation to prevent invalid state transitions
+
+## Installation
+### Maven
+Add the JitPack repository to your build file:
+``` xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+Add the dependency:
+``` xml
+<dependency>
+    <groupId>com.github.AIski</groupId>
+    <artifactId>SpaceX-Rockets-Repository</artifactId>
+    <version>v1.0.0</version>
+</dependency>
+
+<!-- Optional: Add SLF4J for logging -->
+<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-simple</artifactId>
+    <version>2.0.17</version>
+    <scope>compile</scope>
+</dependency>
+```
+### Gradle
+Add the JitPack repository to your build file:
+``` groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+Add the dependency:
+``` groovy
+dependencies {
+    implementation 'com.github.AIski:SpaceX-Rockets-Repository:v1.0.0'
+    implementation 'org.slf4j:slf4j-simple:2.0.17'
+}
+```
+## Quick Start
+``` java
+import api.SpaceXRocketsRepository;
+import internal.InMemorySpaceXRocketsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class QuickStartExample {
+    private static final Logger log = LoggerFactory.getLogger(QuickStartExample.class);
+
+    public static void main(String[] args) {
+        // Initialize the repository
+        SpaceXRocketsRepository repository = new InMemorySpaceXRocketsRepository();
+        
+        // Create rockets
+        repository.addRocket("Falcon 9");
+        repository.addRocket("Falcon Heavy");
+        log.info("Created rockets: Falcon 9 and Falcon Heavy");
+        
+        // Create a mission
+        repository.addMission("Mars Exploration");
+        log.info("Created mission: Mars Exploration");
+        
+        // Assign rockets to mission
+        repository.assignRocketToMission("Falcon 9", "Mars Exploration");
+        repository.assignRocketToMission("Falcon Heavy", "Mars Exploration");
+        log.info("Assigned rockets to Mars Exploration mission");
+        
+        // Launch the mission
+        repository.launchMission("Mars Exploration");
+        log.info("Mars Exploration mission launched");
+        
+        // Complete the mission
+        repository.endMission("Mars Exploration");
+        log.info("Mars Exploration mission completed");
+        
+        // Repair rockets after mission
+        repository.repairRocket("Falcon 9");
+        repository.repairRocket("Falcon Heavy");
+        log.info("Rockets repaired and ready for next mission");
+        
+        // Get summaries
+        log.info("Mission summaries: {}", repository.getMissionSummaries());
+        log.info("Rocket summaries: {}", repository.getRocketSummaries());
+    }
+}
+```
+## Detailed Example
+Here's a more comprehensive example demonstrating various features:
+``` java
+import api.SpaceXRocketsRepository;
+import internal.InMemorySpaceXRocketsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DetailedExample {
+    private static final Logger log = LoggerFactory.getLogger(DetailedExample.class);
+
+    public static void main(String[] args) {
+        log.info("Starting SpaceXRocketsRepository");
+        SpaceXRocketsRepository repository = new InMemorySpaceXRocketsRepository();
+
+        // Create missions and rockets
+        repository.addMission("Mars");
+        repository.addRocket("Dragon 1");
+        repository.addRocket("Dragon 2");
+        log.info("Created Mars mission and Dragon rockets");
+        logRocketsAndMissions(repository);
+
+        // Single rocket mission
+        repository.addMission("Vertical Landing");
+        repository.assignRocketToMission("Dragon 1", "Vertical Landing");
+        repository.launchMission("Vertical Landing");
+        log.info("Launched Vertical Landing mission with Dragon 1");
+        logRocketsAndMissions(repository);
+
+        repository.endMission("Vertical Landing");
+        log.info("Completed Vertical Landing mission");
+        logRocketsAndMissions(repository);
+
+        repository.repairRocket("Dragon 1");
+        log.info("Repaired Dragon 1 rocket");
+        logRocketsAndMissions(repository);
+
+        // Multi-rocket mission
+        repository.addMission("Double Landing");
+        repository.assignRocketToMission("Dragon 1", "Double Landing");
+        repository.assignRocketToMission("Dragon 2", "Double Landing");
+        repository.launchMission("Double Landing");
+        log.info("Launched Double Landing mission with both Dragons");
+        logRocketsAndMissions(repository);
+
+        repository.endMission("Double Landing");
+        log.info("Completed Double Landing mission");
+        logRocketsAndMissions(repository);
+
+        // Pending mission example
+        repository.addMission("Luna1");
+        repository.assignRocketToMission("Dragon 1", "Luna1");
+        repository.assignRocketToMission("Dragon 2", "Luna1");
+        repository.launchMission("Luna1");
+        log.info("Luna1 mission launched with rockets needing repair - should be PENDING");
+        logRocketsAndMissions(repository);
+
+        repository.repairRocket("Dragon 1");
+        repository.repairRocket("Dragon 2");
+        log.info("Repaired both dragons, mission still needs to be resumed");
+        logRocketsAndMissions(repository);
+
+        // Use resumeMission() to continue a PENDING mission
+        repository.resumeMission("Luna1");
+        log.info("Resumed Luna1 mission - should now be IN_PROGRESS");
+        logRocketsAndMissions(repository);
+    }
+
+    private static void logRocketsAndMissions(SpaceXRocketsRepository repository) {
+        log.info("Mission summaries: {}", repository.getMissionSummaries());
+        log.info("Rocket summaries: {}", repository.getRocketSummaries());
+        log.info("---");
+    }
+}
+```
+## Core Concepts
+### Rocket Status
+- **ON_GROUND**: Ready for mission assignment
+- **IN_REPAIR**: Under maintenance, cannot be assigned to missions
+- **IN_MISSION**: Currently assigned to an active mission
+
+### Mission Status
+- **SCHEDULED**: Initial status, can accept rocket assignments
+- **PENDING**: Mission has at least one rocket in repair
+- **IN_PROGRESS**: Mission is actively running with all rockets ready
+- **COMPLETED**: Mission has been successfully completed
+
+## API Reference
+### Rocket Operations
+- `addRocket(String name)`: Create a new rocket
+- `repairRocket(String name)`: Set a rocket's status to ON_GROUND (from IN_REPAIR)
+- `getRocketSummary(String name)`: Get detailed information about a rocket
+- `getRocketSummaries()`: Get summaries of all rockets
+
+### Mission Operations
+- `addMission(String name)`: Create a new mission
+- `assignRocketToMission(String rocketName, String missionName)`: Assign a rocket to a mission
+- `launchMission(String name)`: Launch a mission (changes status to IN_PROGRESS or PENDING)
+- `resumeMission(String name)`: Resume a PENDING mission if all rockets are ready
+- `endMission(String name)`: Complete a mission and set all rockets to IN_REPAIR
+- `getMissionSummary(String name)`: Get detailed information about a mission
+- `getMissionSummaries()`: Get summaries of all missions
+
+## Design Decisions
+- Rocket and mission names are unique identifiers
+- Names are case-insensitive for comparison purposes
+- Strict validation ensures operations maintain system integrity
+- Simple API hides complexity of status management
+- In-memory storage for simplicity
+
+## Requirements
+- Java 17
+- SLF4J for logging (optional but recommended)
+
+## License
+[MIT License](LICENSE)
 
 
 
-**Assumptions:**
-Rocket and Mission names are unique. We will trim, and compare lowercase, so there will be no case like "Dragon 1", and "DRAGON 1", or "dragon 1".
+## Design Decisions and Development Journal
+This section outlines the thought process, assumptions, and decisions made during the development of this library.
+### Core Assumptions
+- **Unique Identifiers**: Rocket and Mission names are unique and serve as identifiers
+    - Names are normalized (trimmed and compared case-insensitive)
+    - No duplicate names like "Dragon 1" and "DRAGON 1" are allowed
 
-Statuses logic is not crystal-clear, these are assumptions we are going to stick to:
-- Rocket binding to mission: requirement - rocket has to be of IN_REPAIR or ON_GROUND status, mission status of SCHEDULED or PENDING. 
-  Adding rocket to pending mission is a specific case, it is not basic, but lets add it. 
-  Its when mission was already given a green light, but one of rockets is still IN_REPAIR, so its on hold anyways. 
-  Lets say, someone might want to add a rocket to that mission, since its not truly launched yet, we are going to implement this case too.
+- **Rocket Status Transitions**:
+    - Manual status changes limited to `repairRocket()` (IN_REPAIR → ON_GROUND)
+    - Other status changes happen automatically as part of mission operations
+    - After mission completion, rockets automatically enter IN_REPAIR status
 
-- Rocket status manual change can only be done on IN_REPAIR status and it can be changed only to ON_GROUND (ready to launch). 
-  To simplify the logic, lets expose only one method, repairRocket(). 
-  This way we avoid all different cases that are logically invalid, making code cleaner, user flow as simple as it can be.
+- **Mission Status Logic**:
+    - SCHEDULED → PENDING: When at least one assigned rocket is in repair
+    - SCHEDULED → IN_PROGRESS: When all assigned rockets are ready (ON_GROUND)
+    - IN_PROGRESS → COMPLETED: When mission is explicitly ended
+    - PENDING → IN_PROGRESS: Manual resumption after all rockets are repaired
 
-- Mission status change I. From SCHEDULED to PENDING- given at least one rocket is assigned to it and at least one is in repair.
-  If it's more than one rocket, and none of them are in repair, we move straight to IN_PROGRESS.
+- **Assignment Rules**:
+    - Rockets can only be assigned to one mission at a time
+    - Reassignment only possible after mission completion and rocket repair
 
+### Design Considerations
+1. **Simple Identifiers vs. IDs**:
+    - Chose to use names as unique identifiers for simplicity
+    - Avoids additional complexity of ID management
+    - Trade-off: Makes renaming entities more challenging
 
-- Mission status change II. From IN_PROGRESS to COMPLETED- all rockets are returned Their statuses are set to IN_REPAIR- 
- The <"IN_REPAIR" after mission end> part was not mentioned in requirements, but it makes sense, maintenance has to be done to any ship before re-launch.
- Sounds like we could simplify the process of launching, and expose simple launchMission() method. 
- This way we simplify the logic, reduce the complexity of all weird statuses, make it easier for user to operate the library.
+2. **API Design Philosophy**:
+    - Focused on exposing simple, logical operations (e.g., `launchMission()`)
+    - Complex status transitions are handled internally
+    - Prevents invalid state transitions by design
 
- Same store with exposing finishMission() method, we would hide all the statuses complexity, weird validations, checks, make things as simple possible.
-Manual changing of mission statuses backwards, from ENDED to SCHEDULED, or stuff like this sound like a joke, we are not going to expose such a broad methods.
+3. **Error Handling Approach**:
+    - Clear exceptions for invalid operations rather than silent failures
+    - Helps identify issues early during development
+    - Provides explicit feedback on operation failures
 
-- No re-assigning rockets to missions. 
-  Once mission is assigned to rocket, it can't be re-assigned. Only once the mission is ended, and rocket is back from IN_REPAIR.
+4. **Data Storage**:
+    - Simple collection-based storage for in-memory implementation
+    - Prioritized simplicity over performance optimizations
+    - Suitable for the expected scale of operations
 
+5. **Code Organization**:
+    - Separated validation logic into dedicated components
+    - Encapsulated domain logic within entities
+    - Clear separation between API and implementation
 
-**Notes:**
-1. Should I implement IDs?
-   Will come in handy if we develop rename feature or want to implement database storage.  
-   For this library it sounds like overkill, will add extra complexity. Lets keep it simple for now, no Ids.
+### Technical Challenges Solved
+- **Status Management**: Created a system where status changes follow business rules automatically
+- **Association Handling**: Implemented bidirectional relationship between rockets and missions
+- **Validation**: Built comprehensive validation to prevent invalid operations
+- **Testing**: Developed comprehensive tests for all possible workflows
 
-   Since names are unique, they will serve as identifiers.
+### Development Process
+Several iterations improved the design:
+1. Normalized comparison operations and error messages
+2. Simplified testing approach to focus on API-level tests
+3. Revised access modifiers for better encapsulation
+4. Extracted nameValidation, mapping, lookup logic to dedicated components.
+5. Implemented proper equals/hashCode for entity comparison
+7. Fixed a bug where rocket-mission links weren't properly broken after mission completion
 
-2. What about get a summary of rockets? Its not in requirements, but it might be really useful.
-   List rockets, being able see all the names, and its statuses. It sounds like a an extra method we should add to the library logic.
-
-3. Return type from contract? DTO should be a necessity, lets create Summaries (records).
-   
-4. How to store data? Simple collection or Map? 
-   Let's keep performance out of the scope for now, go with simplicity. Collection will be enough.
-
-5. What should happen when user is trying to create duplicate?
-   Throw exception? Silently ignore? 
-   Idempotent adds would be nice and clean, but it would hide bugs. 
-   Lets go with clear feedback and throw exceptions. Adds little complexity but cases are clearly separated and user knows what's going on.
-
-6. Cleaning up the InMemorySpaceXRocketsRepository
-   There might be some serious lines of code that could be extracted to another component. 
-   For starters, we could extract validation - null/bland names, and duplicates.
-   This might significantly increase readability and maintainability.
-
-7. What about re-assigning rockets to missions?
-   Its not in requirements, but it might be useful in specific case, where mission has not yet started. It adds some complexity, lets skip it for now.
-   So if rocket is already assigned to mission, we can't assign it to another one.
-
-8. How to test invalid status scenarios? Since statuses are now internal, and not set manualy. We cannot fake invalid state this way. 
-   Should we expose method to setStatus just for testing? Test class is in different package, we would have to move it to same package.
-   Mock it in our own library? Not sure if it's a good idea, we would also need custom protected constructor just for mocking.
-   Lets keep it simple, test logic achievable by api methods.
-
-9. How to handle status changes? Domain class state change method? Alternative is protected setter, does not sound good.
-   Let's encapsulate the logic, move it to domain.
-
-10. What if rocket was on repair, mission was launched -> moved to PENDING. Upon repair, should it be automaticaly moved to IN_PROGRESS, 
-    or should the mission status upgrade be manual?
-    Lets go with manual, so the user gets to decide.
-    Meaning we implement resumeMission() method, that will move PENDING Mission to IN_PROGRESS, if all rockets are ON_GROUND.
-
-11.Run into a bug while manual testing. Rocket returned from first mission, but the link between Rocket and Mission was not broken - it should. 
-   Lets add a test for this case and then fix it.
-
-Todo: 
-- ~~normalize equals, preferably no =='s. Normalize error messages.~~ DONE
-- ~~simplify the name not found tests, we probably could do just one test, for all methods that use that call.~~ We will drop it for now, stick to API-level tests, meaning true contracts.
-- ~~Double check access modifiers for Rocket and Mission getters.~~ DONE
-- ~~Extract mapping to separate class from InMemorySpaceXRocketsRepository.~~ DONE
-- ~~Implement equals and hashcode for Mission and Rocket for equals to work properly.~~ DONE
-- ~~Mission methods rocket - write extra ensureCanLaunch, etc methods?~~ DONE
+The final design prioritizes a clean API, proper encapsulation, and robustness against invalid operations.
