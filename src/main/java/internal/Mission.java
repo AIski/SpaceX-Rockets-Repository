@@ -78,6 +78,7 @@ class Mission {
 
             // Should check here if all rockets can be launched?
             this.getRockets().forEach(Rocket::endMission);
+            this.getRockets().clear();
             this.status = MissionStatus.ENDED;
         }
     }

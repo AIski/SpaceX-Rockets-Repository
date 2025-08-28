@@ -477,7 +477,18 @@ final class SpaceXRocketsRepositoryTest {
         repository.endMission("Mars");
         assertEquals(MissionStatus.ENDED, repository.getMissionSummaries().get(0).status());
         assertEquals(RocketStatus.IN_REPAIR, repository.getRocketSummaries().get(0).status());
+    }
 
+    @Test
+    void endMission_validInput_endsSuccessfully_unassignsRocketFromMission() {
+        var repository = createRepository();
+        repository.addRocket("Dragon 1");
+        repository.addMission("Mars");
+        repository.assignRocketToMission("Dragon 1", "Mars");
+        repository.launchMission("Mars");
+        repository.endMission("Mars");
+
+        assertEquals(0, repository.getMissionSummaries().get(0).rockets().size());
     }
 
     @Test

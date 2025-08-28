@@ -2,37 +2,47 @@ package demo;
 
 import api.SpaceXRocketsRepository;
 import internal.InMemorySpaceXRocketsRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 class Demo {
+    private static final Logger log = LoggerFactory.getLogger(Demo.class);
+
     public static void main(String[] args) {
-        System.out.println("SpaceXRocketsRepository App started.");
+        log.info("SpaceXRocketsRepository App started.");
         SpaceXRocketsRepository repository = new InMemorySpaceXRocketsRepository();
 
         repository.addRocket("Dragon 1");
         repository.addMission("Mars");
-        System.out.println("Created Dragon 1 rocket and Mars mission.");
+        log.info("Created Dragon 1 rocket and Mars mission.");
         repository.assignRocketToMission("Dragon 1", "Mars");
-        System.out.println("Assigned Dragon 1 to Mars mission.");
+        log.info("Assigned Dragon 1 to Mars mission.");
 
-        System.out.println(repository.getRocketSummaries());
-        System.out.println(repository.getMissionSummaries());
+        logRocketsAndMissions(repository);;
 
         repository.launchMission("Mars");
-        System.out.println("Mars mission launched.");
-        System.out.println(repository.getRocketSummaries());
-        System.out.println(repository.getMissionSummaries());
+        log.info("Mars mission launched.");
+        logRocketsAndMissions(repository);
 
         repository.endMission("Mars");
-        System.out.println("Mars mission ended.");
-        System.out.println(repository.getRocketSummaries());
-        System.out.println(repository.getMissionSummaries());
+        log.info("Mars mission ended.");
+        logRocketsAndMissions(repository);
 
         repository.addMission("Venus");
-        System.out.println("Venus mission added.");
+        log.info("Venus mission added.");
         repository.assignRocketToMission("Dragon 1", "Venus");
-        System.out.println("Assigned Dragon 1 to Venus mission.");
-        System.out.println(repository.getRocketSummaries());
-        System.out.println(repository.getMissionSummaries());
+        log.info("Assigned Dragon 1 to Venus mission.");
+        logRocketsAndMissions(repository);
 
+        repository.addMission("Luna 2");
+        log.info("Luna 2 mission added.");
+        logRocketsAndMissions(repository);
+
+    }
+
+    private static void logRocketsAndMissions(SpaceXRocketsRepository repository) {
+        log.info(repository.getRocketSummaries().toString());
+        log.info(repository.getMissionSummaries().toString());
     }
 }
