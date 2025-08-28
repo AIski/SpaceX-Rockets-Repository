@@ -47,6 +47,32 @@ class Rocket {
         this.status = RocketStatus.IN_SPACE;
     }
 
+    void ensureCanLaunchOrThrow() {
+        if (this.status == RocketStatus.IN_SPACE) {
+            throw new IllegalStateException(
+                    "Rocket cannot be launched if it is already is IN_SPACE status"
+            );
+        }
+    }
+
+
+    void ensureCanResumeOrThrow() {
+        if (this.status != RocketStatus.ON_GROUND) {
+            throw new IllegalStateException(
+                    "Mission cannot be resumed rocket is not in ON_GROUND status. Current status: " + this.getStatus()
+            );
+        }
+    }
+
+
+    public void ensureCanEndOrThrow() {
+        if (this.status != RocketStatus.IN_SPACE) {
+            throw new IllegalStateException(
+                    "Mission cannot be resumed rocket is not in IN_SPACE status. Current status: " + this.getStatus()
+            );
+        }
+    }
+
     void endMission() {
         if (this.getStatus() != RocketStatus.IN_SPACE) {
             throw new IllegalStateException(

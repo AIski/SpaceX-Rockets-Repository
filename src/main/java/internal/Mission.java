@@ -43,7 +43,7 @@ class Mission {
         if (hasRocketInRepair()) {
             this.status = MissionStatus.PENDING;
         } else {
-            // Should check here if all rockets can be launched?
+            this.getRockets().forEach(Rocket::ensureCanLaunchOrThrow);
             this.getRockets().forEach(Rocket::launch);
             this.status = MissionStatus.IN_PROGRESS;
         }
@@ -65,7 +65,7 @@ class Mission {
                     "Mission cannot be resumed if any of its rockets are in repair"
             );
         } else {
-            // Should check here if all rockets can be launched?
+            this.getRockets().forEach(Rocket::ensureCanResumeOrThrow);
             this.getRockets().forEach(Rocket::launch);
             this.status = MissionStatus.IN_PROGRESS;
         }
@@ -77,8 +77,7 @@ class Mission {
                     "Mission to be ended must be of status IN_PROGRESS. Current status: " + this.getStatus()
             );
         } else {
-
-            // Should check here if all rockets can be launched?
+            this.getRockets().forEach(Rocket::ensureCanEndOrThrow);
             this.getRockets().forEach(Rocket::endMission);
             this.getRockets().clear();
             this.status = MissionStatus.ENDED;
