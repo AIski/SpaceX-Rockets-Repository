@@ -72,6 +72,9 @@ Manual changing of mission statuses backwards, from ENDED to SCHEDULED, or stuff
     Lets go with manual, so the user gets to decide.
     Meaning we implement resumeMission() method, that will move PENDING Mission to IN_PROGRESS, if all rockets are ON_GROUND.
 
+11.Run into a bug while manual testing. Rocket returned from first mission, but the link between Rocket and Mission was not broken - it should. 
+   Lets add a test for this case and then fix it.
+
 Todo: normalize equals, preferably no =='s. Normalize error messages.
 // simplify the name not found tests, we probably could do just one test, for all methods that use that call.
 // Double check access modifiers for Rocket and Mission getters.

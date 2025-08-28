@@ -8,4 +8,13 @@ public record MissionSummary(
         int rocketsCount,
         List<RocketSummary> rockets
 ) {
+    @Override
+    public String toString() {
+        return "MissionSummary{" +
+                "name='" + name + '\'' +
+                ", status=" + status +
+                ", rocketsCount=" + rocketsCount +
+                ", rockets=" + rockets +
+                '}';
+    }
 }
