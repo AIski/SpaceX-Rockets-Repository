@@ -11,20 +11,20 @@ class Rocket {
     private Mission mission;
 
     // Constructor
-    public Rocket(String name) {
+    Rocket(String name) {
         this.name = name;
     }
 
     // Getters & Setters
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public RocketStatus getStatus() {
+    RocketStatus getStatus() {
         return status;
     }
 
-    public Mission getMission() {
+    Mission getMission() {
         return mission;
     }
 

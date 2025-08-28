@@ -13,20 +13,20 @@ class Mission {
     private List<Rocket> rockets = new ArrayList<>();
 
     // Constructor
-    public Mission(String name) {
+    Mission(String name) {
         this.name = name;
     }
 
     // Getters & Setters
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public MissionStatus getStatus() {
+    MissionStatus getStatus() {
         return status;
     }
 
-    public List<Rocket> getRockets() {
+    List<Rocket> getRockets() {
         return rockets;
     }
 
@@ -83,7 +83,7 @@ class Mission {
         }
     }
 
-    public void assign(Rocket rocket) {
+    protected void assign(Rocket rocket) {
         if (this.getStatus() != MissionStatus.SCHEDULED && this.getStatus() != MissionStatus.PENDING) {
             throw new IllegalStateException(
                     "Mission to be assigned a rocket, must be of status SCHEDULED or PENDING. Current status: " + this.getStatus()

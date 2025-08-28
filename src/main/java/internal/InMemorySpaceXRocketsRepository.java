@@ -26,87 +26,51 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
 
     @Override
     public void assignRocketToMission(String rocketName, String missionName) {
-        Rocket rocket = getRocketByName(rocketName);
-        Mission mission = getMissionByName(missionName);
+        Rocket rocket = getRocketByNameOrThrow(rocketName);
+        Mission mission = getMissionByNameOrThrow(missionName);
         mission.assign(rocket);
+    }
+
+    private Rocket getRocketByNameOrThrow(String rocketName) {
+        return LookupUtils.getRocketByNameOrThrow(rocketName, rockets);
     }
 
     @Override
     public void repairRocket(String rocketName) {
-        Rocket rocket = getRocketByName(rocketName);
+        Rocket rocket = getRocketByNameOrThrow(rocketName);
         rocket.repair();
-    }
-
-    private Rocket getRocketByName(String rocketName) {
-        EntityNameValidator.validateNameNotNullOrBlank(rocketName);
-        return rockets.stream()
-                .filter(rocket -> rocket.getName().equalsIgnoreCase( rocketName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Rocket not found: " + rocketName));
     }
 
     @Override
     public void launchMission(String missionName) {
-        Mission mission = getMissionByName(missionName);
+        Mission mission = getMissionByNameOrThrow(missionName);
         mission.launch();
     }
 
     @Override
     public void resumeMission(String missionName) {
-        Mission mission = getMissionByName(missionName);
+        Mission mission = getMissionByNameOrThrow(missionName);
         mission.resume();
     }
 
     @Override
     public void endMission(String missionName) {
-        Mission mission = getMissionByName(missionName);
+        Mission mission = getMissionByNameOrThrow(missionName);
         mission.end();
     }
 
-    private Mission getMissionByName(String missionName) {
-        EntityNameValidator.validateNameNotNullOrBlank(missionName);
-        return missions.stream()
-                .filter(mission -> mission.getName().equalsIgnoreCase(missionName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Mission not found: " + missionName));
+    private Mission getMissionByNameOrThrow(String missionName) {
+       return LookupUtils.getMissionByNameOrThrow(missionName, missions);
     }
 
     @Override
     public List<MissionSummary> getMissionSummaries() {
-        return missions.stream()
-                .sorted(
-                        Comparator.comparingInt((Mission mission) -> mission.getRockets().size()).reversed()
-                                .thenComparing(Mission::getName, Comparator.reverseOrder()))
-                .map((Mission mission) -> toMissionSummary(mission))
-                .toList();
-    }
-
-    private MissionSummary toMissionSummary(Mission mission) {
-        List<RocketSummary> missionRockets = mission.getRockets().stream()
-                .sorted(Comparator.comparing(Rocket::getName))
-                .map(this::toRocketSummary)
-                .toList();
-        return new MissionSummary(
-                mission.getName(),
-                mission.getStatus(),
-                mission.getRockets().size(),
-                missionRockets
-        );
+        return SummariesMapper.toMissionSummaries(this.missions);
     }
 
     @Override
     public List<RocketSummary> getRocketSummaries() {
-        return rockets.stream()
-                .sorted(Comparator.comparing(Rocket::getName))
-                .map(this::toRocketSummary)
-                .toList();
+        return SummariesMapper.toRocketSummaries(this.rockets);
     }
 
-    private RocketSummary toRocketSummary(Rocket rocket) {
-        return new RocketSummary(rocket.getName(), rocket.getStatus());
-    }
-
-    // Constructors
-    public InMemorySpaceXRocketsRepository() {
-    }
 }

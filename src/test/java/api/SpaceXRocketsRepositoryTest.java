@@ -262,9 +262,6 @@ final class SpaceXRocketsRepositoryTest {
         // then we try to assign rocket to mission.
     }
 
-    // case after mission 1 is finished, dragons are repaired and reused to 2nd mission.
-
-
     @Test
     void repairRocket_validInput_backFromPreviousMission_repairsRocketSuccessfully() {
         var repository = createRepository();
@@ -418,7 +415,6 @@ final class SpaceXRocketsRepositoryTest {
 
         assertEquals(MissionStatus.IN_PROGRESS, repository.getMissionSummaries().get(0).status());
         assertEquals(RocketStatus.IN_SPACE, repository.getRocketSummaries().get(0).status());
-
     }
 
     @Test

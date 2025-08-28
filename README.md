@@ -77,7 +77,7 @@ Manual changing of mission statuses backwards, from ENDED to SCHEDULED, or stuff
 
 Todo: normalize equals, preferably no =='s. Normalize error messages.
 // simplify the name not found tests, we probably could do just one test, for all methods that use that call.
-// Double check access modifiers for Rocket and Mission getters.
-// Extract mapping to separate class from InMemorySpaceXRocketsRepository.
+// _~~Double check access modifiers for Rocket and Mission getters.~~_ DONE
+// ~~Extract mapping to separate class from InMemorySpaceXRocketsRepository.~~ DONE
 // Implement equals and hashcode for Mission and Rocket for equals to work properly.
 // Mission methods rocket - write extra ensureCanLaunch, etc methods?
