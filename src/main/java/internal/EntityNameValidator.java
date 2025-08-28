@@ -1,6 +1,7 @@
 package internal;
 
 import java.util.Collection;
+import java.util.Objects;
 
 final class EntityNameValidator {
 
@@ -41,7 +42,7 @@ final class EntityNameValidator {
     }
 
     static void validateNameNotNullOrBlank(String name) {
-        if (name == null) {
+        if (Objects.isNull(name)) {
             throw new NullPointerException("Name cannot be null");
         }
         if (name.isBlank()) {

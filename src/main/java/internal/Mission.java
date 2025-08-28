@@ -31,7 +31,7 @@ class Mission {
     }
 
     // Methods
-    protected void launch() {
+    void launch() {
         if (this.getStatus() != MissionStatus.SCHEDULED) {
             throw new IllegalStateException(
                     "Mission to be launched must be of status SCHEDULED. Current status: " + this.getStatus()
@@ -43,7 +43,7 @@ class Mission {
         if (hasRocketInRepair()) {
             this.status = MissionStatus.PENDING;
         } else {
-            // Should check here if all dragons can be launched?
+            // Should check here if all rockets can be launched?
             this.getRockets().forEach(Rocket::launch);
             this.status = MissionStatus.IN_PROGRESS;
         }
@@ -51,55 +51,76 @@ class Mission {
 
     private boolean hasRocketInRepair() {
         return rockets.stream()
-                .anyMatch(r -> r.getStatus() == RocketStatus.IN_REPAIR);
+                .anyMatch(r -> r.getStatus()== RocketStatus.IN_REPAIR);
     }
 
-    protected void resume() {
+    void resume() {
         if (this.getStatus() != MissionStatus.PENDING) {
             throw new IllegalStateException(
                     "Mission to be resumed must be of status PENDING. Current status: " + this.getStatus()
             );
         }
         if (hasRocketInRepair()) {
-            throw new IllegalStateException("Mission cannot be resumed if any of its dragons are in repair");
+            throw new IllegalStateException(
+                    "Mission cannot be resumed if any of its rockets are in repair"
+            );
         } else {
-            // Should check here if all dragons can be launched?
+            // Should check here if all rockets can be launched?
             this.getRockets().forEach(Rocket::launch);
             this.status = MissionStatus.IN_PROGRESS;
         }
     }
 
-    protected void end() {
+    void end() {
         if (this.getStatus() != MissionStatus.IN_PROGRESS) {
             throw new IllegalStateException(
                     "Mission to be ended must be of status IN_PROGRESS. Current status: " + this.getStatus()
             );
         } else {
 
-            // Should check here if all dragons can be launched?
+            // Should check here if all rockets can be launched?
             this.getRockets().forEach(Rocket::endMission);
             this.getRockets().clear();
             this.status = MissionStatus.ENDED;
         }
     }
 
-    protected void assign(Rocket rocket) {
+    void assign(Rocket rocket) {
         if (this.getStatus() != MissionStatus.SCHEDULED && this.getStatus() != MissionStatus.PENDING) {
             throw new IllegalStateException(
                     "Mission to be assigned a rocket, must be of status SCHEDULED or PENDING. Current status: " + this.getStatus()
             );
         }
         if (rocket.getStatus() == RocketStatus.IN_SPACE) {
-            throw new IllegalStateException("Rocket cannot be assigned to a mission if it is already in space");
+            throw new IllegalStateException(
+                    "Rocket cannot be assigned to a mission if it is already in space"
+            );
         }
         if (this.rockets.contains(rocket)) {
-            throw new IllegalStateException("Rocket cannot be assigned to a mission more than once");
+            throw new IllegalStateException(
+                    "Rocket cannot be assigned to a mission more than once"
+            );
         }
         if (Objects.nonNull(rocket.getMission())) {
-            throw new IllegalStateException("Rocket cannot be assigned to a mission if it is already assigned to another mission");
+            throw new IllegalStateException(
+                    "Rocket cannot be assigned to a mission if it is already assigned to another mission"
+            );
         }
 
         rocket.assignMission(this);
         this.rockets.add(rocket);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Mission)) return false;
+        Mission other = (Mission) o;
+        return Objects.equals(name, other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }
