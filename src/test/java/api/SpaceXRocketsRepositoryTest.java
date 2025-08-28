@@ -406,9 +406,12 @@ final class SpaceXRocketsRepositoryTest {
         repository.launchMission("Mars");
         repository.endMission("Mars");
 
+        //Dragon 1 is still in repair from previous mission and is assigned to second mission before repair.
+        //We launch mission 2, before repairing rocket.
         repository.addMission("Venus");
         repository.assignRocketToMission("Dragon 1", "Venus");
-        //Dragon 1 is still in repair from previous mission and is assigned to second mission before repair.
+        repository.launchMission("Venus");
+
         // Dragon 1 is repaired, mission resumed.
         repository.repairRocket("Dragon 1");
         repository.resumeMission("Venus");

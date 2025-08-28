@@ -76,7 +76,7 @@ public final class InMemorySpaceXRocketsRepository implements SpaceXRocketsRepos
         return missions.stream()
                 .sorted(
                         Comparator.comparingInt((Mission mission) -> mission.getRockets().size()).reversed()
-                                .thenComparing(Mission::getName).reversed())
+                                .thenComparing(Mission::getName, Comparator.reverseOrder()))
                 .map((Mission mission) -> toMissionSummary(mission))
                 .toList();
     }
