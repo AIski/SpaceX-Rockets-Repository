@@ -5,16 +5,16 @@ import java.util.List;
 public record MissionSummary(
         String name,
         MissionStatus status,
-        int rocketsCount,
-        List<RocketSummary> rockets
+        int dragonsCount,
+        List<RocketSummary> dragons
 ) {
     @Override
     public String toString() {
-        return "MissionSummary{" +
-                "name='" + name + '\'' +
-                ", status=" + status +
-                ", rocketsCount=" + rocketsCount +
-                ", rockets=" + rockets +
+        return "{" +
+                 name + " - "
+                + status +
+                "- Dragons: " + dragonsCount +
+                " " + dragons +
                 '}';
     }
 }

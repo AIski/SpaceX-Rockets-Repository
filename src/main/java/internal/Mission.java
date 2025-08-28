@@ -43,7 +43,7 @@ class Mission {
         if (hasRocketInRepair()) {
             this.status = MissionStatus.PENDING;
         } else {
-            // Should check here if all rockets can be launched?
+            // Should check here if all dragons can be launched?
             this.getRockets().forEach(Rocket::launch);
             this.status = MissionStatus.IN_PROGRESS;
         }
@@ -61,9 +61,9 @@ class Mission {
             );
         }
         if (hasRocketInRepair()) {
-            throw new IllegalStateException("Mission cannot be resumed if any of its rockets are in repair");
+            throw new IllegalStateException("Mission cannot be resumed if any of its dragons are in repair");
         } else {
-            // Should check here if all rockets can be launched?
+            // Should check here if all dragons can be launched?
             this.getRockets().forEach(Rocket::launch);
             this.status = MissionStatus.IN_PROGRESS;
         }
@@ -76,7 +76,7 @@ class Mission {
             );
         } else {
 
-            // Should check here if all rockets can be launched?
+            // Should check here if all dragons can be launched?
             this.getRockets().forEach(Rocket::endMission);
             this.getRockets().clear();
             this.status = MissionStatus.ENDED;

@@ -6,9 +6,9 @@ public record RocketSummary(
 ) {
     @Override
     public String toString() {
-        return "RocketSummary{" +
-                "name='" + name + '\'' +
-                ", status=" + status +
+        return "{" +
+                name +
+                " - " + status +
                 '}';
     }
 }

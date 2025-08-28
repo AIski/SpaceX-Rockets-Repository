@@ -42,7 +42,7 @@ class Demo {
     }
 
     private static void logRocketsAndMissions(SpaceXRocketsRepository repository) {
-        log.info(repository.getRocketSummaries().toString());
-        log.info(repository.getMissionSummaries().toString());
+        log.info("Mission summaries: {}", repository.getMissionSummaries().toString());
+        log.info("Rocket summaries: {}", repository.getRocketSummaries().toString());
     }
 }

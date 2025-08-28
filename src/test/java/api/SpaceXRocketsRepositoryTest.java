@@ -94,7 +94,7 @@ final class SpaceXRocketsRepositoryTest {
         repository.addMission("Mars");
 
         var summaries = repository.getMissionSummaries();
-        assertNotNull(summaries.get(0).rockets());
+        assertNotNull(summaries.get(0).dragons());
     }
 
     @Test
@@ -104,9 +104,9 @@ final class SpaceXRocketsRepositoryTest {
 
         var marsMission = repository.getMissionSummaries().get(0);
         assertEquals(MissionStatus.SCHEDULED, marsMission.status());
-        assertEquals(0, marsMission.rocketsCount());
+        assertEquals(0, marsMission.dragonsCount());
         assertEquals("Mars", marsMission.name());
-        assertTrue(marsMission.rockets().isEmpty());
+        assertTrue(marsMission.dragons().isEmpty());
     }
 
     @Test
@@ -170,7 +170,7 @@ final class SpaceXRocketsRepositoryTest {
                 summaries.stream().map(MissionSummary::name).toList());
 
         assertEquals(List.of(2, 1, 1),
-                summaries.stream().map(MissionSummary::rocketsCount).toList());
+                summaries.stream().map(MissionSummary::dragonsCount).toList());
     }
 
     @Test
@@ -217,8 +217,8 @@ final class SpaceXRocketsRepositoryTest {
 
         repository.assignRocketToMission("Dragon 1", "Mars");
 
-        assertEquals(1, repository.getMissionSummaries().get(0).rocketsCount());
-        assertEquals("Dragon 1", repository.getMissionSummaries().get(0).rockets().get(0).name());
+        assertEquals(1, repository.getMissionSummaries().get(0).dragonsCount());
+        assertEquals("Dragon 1", repository.getMissionSummaries().get(0).dragons().get(0).name());
     }
 
     @Test
@@ -258,11 +258,11 @@ final class SpaceXRocketsRepositoryTest {
 
     @Test
     void assignRocketToMission_invalidMissionStatus_throwsIllegalStateException() {
-        // mission launched with all repaired rockets, then ended
+        // mission launched with all repaired dragons, then ended
         // then we try to assign rocket to mission.
     }
 
-    // case after mission 1 is finished, rockets are repaired and reused to 2nd mission.
+    // case after mission 1 is finished, dragons are repaired and reused to 2nd mission.
 
 
     @Test
@@ -488,7 +488,7 @@ final class SpaceXRocketsRepositoryTest {
         repository.launchMission("Mars");
         repository.endMission("Mars");
 
-        assertEquals(0, repository.getMissionSummaries().get(0).rockets().size());
+        assertEquals(0, repository.getMissionSummaries().get(0).dragons().size());
     }
 
     @Test
