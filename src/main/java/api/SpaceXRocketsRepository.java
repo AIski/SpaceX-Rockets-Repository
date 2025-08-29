@@ -1,5 +1,7 @@
 package api;
 
+import internal.InMemorySpaceXRocketsRepository;
+
 import java.util.List;
 
 /**
@@ -10,6 +12,15 @@ import java.util.List;
  * Implementations enforce all business rules regarding mission and rocket state transitions.
  */
 public interface SpaceXRocketsRepository {
+
+    /**
+     * Creates an in-memory implementation of the {@link SpaceXRocketsRepository}.
+     *
+     * @return an instance of {@link InMemorySpaceXRocketsRepository}, providing functionality for managing missions and rockets in memory.
+     */
+    static SpaceXRocketsRepository inMemory() {
+        return new InMemorySpaceXRocketsRepository();
+    }
 
     /**
      * Creates a new rocket with the given name.

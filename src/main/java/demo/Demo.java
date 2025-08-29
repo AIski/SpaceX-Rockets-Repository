@@ -1,7 +1,6 @@
 package demo;
 
 import api.SpaceXRocketsRepository;
-import internal.InMemorySpaceXRocketsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +10,7 @@ class Demo {
 
     public static void main(String[] args) {
         log.info("SpaceXRocketsRepository App started.");
-        SpaceXRocketsRepository repository = new InMemorySpaceXRocketsRepository();
+        SpaceXRocketsRepository repository = SpaceXRocketsRepository.inMemory();
 
         repository.addRocket("Dragon 1");
         repository.addMission("Mars");
@@ -19,7 +18,7 @@ class Demo {
         repository.assignRocketToMission("Dragon 1", "Mars");
         log.info("Assigned Dragon 1 to Mars mission.");
 
-        logRocketsAndMissions(repository);;
+        logRocketsAndMissions(repository);
 
         repository.launchMission("Mars");
         log.info("Mars mission launched.");

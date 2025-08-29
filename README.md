@@ -75,7 +75,7 @@ public class QuickStartExample {
 
     public static void main(String[] args) {
         // Initialize the repository
-        SpaceXRocketsRepository repository = new InMemorySpaceXRocketsRepository();
+        SpaceXRocketsRepository repository = SpaceXRocketsRepository.inMemory();
         
         // Create rockets
         repository.addRocket("Falcon 9");
@@ -123,7 +123,7 @@ public class DetailedExample {
 
     public static void main(String[] args) {
         log.info("Starting SpaceXRocketsRepository");
-        SpaceXRocketsRepository repository = new InMemorySpaceXRocketsRepository();
+        SpaceXRocketsRepository repository = SpaceXRocketsRepository.inMemory();
 
         // Create missions and rockets
         repository.addMission("Mars");

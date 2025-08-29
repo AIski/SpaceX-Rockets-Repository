@@ -11,7 +11,7 @@ class BiggerDemo {
 
     public static void main(String[] args) {
         log.info("SpaceXRocketsRepository App started - BiggerDemo.");
-        SpaceXRocketsRepository repository = new InMemorySpaceXRocketsRepository();
+        SpaceXRocketsRepository repository = SpaceXRocketsRepository.inMemory();
 
         repository.addMission("Mars");
         log.info("Created Mars mission.");
